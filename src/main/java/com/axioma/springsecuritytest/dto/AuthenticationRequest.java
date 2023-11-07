@@ -1,6 +1,6 @@
 package com.axioma.springsecuritytest.dto;
 
-public class AuthenticationResquest {
+public class AuthenticationRequest {
 
     private String username;
     private String password;

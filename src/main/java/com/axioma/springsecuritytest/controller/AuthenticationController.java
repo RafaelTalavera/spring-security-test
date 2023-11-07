@@ -1,24 +1,34 @@
 package com.axioma.springsecuritytest.controller;
 
+import com.axioma.springsecuritytest.dto.AuthenticationRequest;
 import com.axioma.springsecuritytest.dto.AuthenticationResponse;
-import com.axioma.springsecuritytest.dto.AuthenticationResquest;
+import com.axioma.springsecuritytest.service.AuthenticationService;
 import jakarta.validation.Valid;
-import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
 public class AuthenticationController {
 
+
+    @Autowired
+    private AuthenticationService authenticationService;
+
+    @PreAuthorize("permitAll")
     @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponse> login(
-            @RequestBody @Valid AuthenticationResquest authRequest) {
+            @RequestBody @Valid AuthenticationRequest authRequest){
+        AuthenticationResponse jwtDto = authenticationService.login(authRequest);
+        return ResponseEntity.ok(jwtDto);
+    }
 
-        return null;
+    @PreAuthorize("permitAll")
+    @GetMapping("/public-access")
+    public String publicAccessEndpoint(){
+        return "este endpoint es público";
     }
 
 }

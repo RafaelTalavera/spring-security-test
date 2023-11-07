@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "\"user\"")
-public class User {
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,6 +39,31 @@ public class User {
         return username;
     }
 
+    //esta cuenta no esta expirada
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    // no esta esta cuenta bloqueda
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    //esta cuentas no están expiradas
+    //aqui se le puede agreegar desde base de datos un rango de expiración
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
+
     public void setUsername(String username) {
         this.username = username;
     }
@@ -49,6 +74,18 @@ public class User {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+
+        List<GrantedAuthority> authorities = role.getPermissions().stream()
+                .map(permissionEnum -> new SimpleGrantedAuthority(permissionEnum.name()))
+                .collect(Collectors.toList());
+
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + role.name()));
+
+        return authorities;
     }
 
     public String getPassword() {
